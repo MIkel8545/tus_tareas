@@ -80,15 +80,13 @@ class _TaskForm extends StatelessWidget {
                   hintText: 'Fecha de la tarea',
                   labelText: 'Fecha',
                   prefixIcon: Icons.date_range),
-              /* onTap: () async {
+              onTap: () async {
                 DateTime? newDate = await showDatePicker(
                     context: context,
                     initialDate: date,
                     firstDate: DateTime(1900),
                     lastDate: DateTime(2100));
-                if (newDate == null) return;
-                setState(() => date = newDate)
-              },*/
+              },
             ),
           ],
         )),

@@ -36,16 +36,29 @@ class TaskCard extends StatelessWidget {
               ],
             ),
             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   task.titulo,
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.start,
                 ),
-                Text(
-                  DateFormat.MMMMd('es').format(date),
-                  style: TextStyle(
-                      color: Color.fromARGB(255, 115, 141, 228), fontSize: 20),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.calendar_today,
+                      color: Colors.indigo,
+                      size: 18,
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      DateFormat.MMMMd('es').format(date),
+                      style: TextStyle(
+                          color: Color.fromARGB(255, 115, 141, 228),
+                          fontSize: 20),
+                    ),
+                  ],
                 )
               ],
             )
