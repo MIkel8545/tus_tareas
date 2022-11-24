@@ -41,7 +41,7 @@ class Login extends StatelessWidget {
           const SizedBox(height: 20),
           OutlinedButton(
             style: OutlinedButton.styleFrom(
-              side: const BorderSide(width: 1.0, color: Colors.deepPurple),
+              side: const BorderSide(width: 1.0, color: Colors.indigo),
             ),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
@@ -57,7 +57,7 @@ class Login extends StatelessWidget {
           SizedBox(height: 20),
           OutlinedButton(
             style: OutlinedButton.styleFrom(
-              side: BorderSide(width: 1.0, color: Colors.deepPurple),
+              side: BorderSide(width: 1.0, color: Colors.indigo),
             ),
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 52, vertical: 15),
@@ -130,7 +130,7 @@ class _LoginForm extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10)),
                 disabledColor: Colors.grey,
                 elevation: 0,
-                color: Colors.deepPurple,
+                color: Colors.indigo,
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                   child: Text(

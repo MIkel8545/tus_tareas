@@ -39,7 +39,8 @@ class MyApp extends StatelessWidget {
         'login': (_) => Login(),
         'home': (_) => Home(),
         'register': (_) => Register(),
-        'task': (_) => TaskPage()
+        'task': (_) => TaskPage(),
+        'openTask': (_) => OpenTask(),
       },
     );
   }

@@ -4,33 +4,12 @@
 
 import 'dart:convert';
 
-/*
-class Task {
-  Task({
-    required this.objTask,
-  });
-
-  Tasks objTask;
-
-  factory Task.fromJson(String str) => Task.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory Task.fromMap(Map<String, dynamic> json) => Task(
-        objTask: Tasks.fromMap(json["TASK001"]),
-      );
-
-  Map<String, dynamic> toMap() => {
-        "TASK001": objTask.toMap(),
-      };
-} */
-
 class Tasks {
-  Tasks({
-    required this.estado,
-    required this.fecha,
-    required this.titulo,
-  });
+  Tasks(
+      {required this.estado,
+      required this.fecha,
+      required this.titulo,
+      this.id});
 
   String estado;
   String fecha;
@@ -52,4 +31,7 @@ class Tasks {
         "Fecha": fecha,
         "Titulo": titulo,
       };
+
+  Tasks copy() => Tasks(
+      estado: this.estado, fecha: this.fecha, titulo: this.titulo, id: this.id);
 }

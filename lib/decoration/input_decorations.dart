@@ -15,8 +15,7 @@ class InputDecorations {
         labelText: labelText,
         labelStyle: TextStyle(color: Colors.grey),
         hintStyle: TextStyle(color: Colors.grey),
-        prefixIcon: prefixIcon != null
-            ? Icon(prefixIcon, color: Colors.deepPurple)
-            : null);
+        prefixIcon:
+            prefixIcon != null ? Icon(prefixIcon, color: Colors.indigo) : null);
   }
 }

@@ -8,6 +8,7 @@ class TaskService extends ChangeNotifier {
   final String _baseUrl = 'tareasapp-120e6-default-rtdb.firebaseio.com';
 
   final List<Tasks> tasks = [];
+  late Tasks selectedTask;
 
   bool isLoading = true;
 
