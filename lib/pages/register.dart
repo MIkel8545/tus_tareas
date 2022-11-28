@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tus_tareas/services/services.dart';
 import 'package:tus_tareas/widgets/widgets.dart';
 
 import '../decoration/input_decorations.dart';
@@ -12,7 +13,7 @@ class Register extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        title: Text('Registrarse'),
       ),
       body: RegisterBackground(
           child: SingleChildScrollView(
@@ -123,26 +124,37 @@ class _RegisterForm extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10)),
                 disabledColor: Colors.grey,
                 elevation: 0,
-                color: Colors.deepPurple,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-                  child: Text(
-                    registerForm.isLoading ? 'Espere' : 'Registrarse',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+                color: Colors.indigo,
                 onPressed: registerForm.isLoading
                     ? null
                     : () async {
                         FocusScope.of(context).unfocus();
+
+                        final authService =
+                            Provider.of<AuthService>(context, listen: false);
+
                         if (!registerForm.isValidForm()) return;
 
                         registerForm.isLoading = true;
 
-                        Future.delayed(Duration(seconds: 2));
+                        final String? error = await authService.createUser(
+                            registerForm.email, registerForm.password);
 
-                        Navigator.pushReplacementNamed(context, 'home');
-                      }),
+                        if (error == null) {
+                          Navigator.pushReplacementNamed(context, 'home');
+                        } else {
+                          print(error);
+                          registerForm.isLoading = false;
+                        }
+                      },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                  child: Text(
+                    registerForm.isLoading ? 'Espere' : 'Registrarse',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                )),
           ],
         ),
       ),

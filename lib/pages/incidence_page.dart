@@ -3,22 +3,25 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
-import 'package:tus_tareas/data/menu_items.dart';
-import 'package:tus_tareas/data/menu_task.dart';
+import 'package:tus_tareas/data/menu_incidence.dart';
 import 'package:tus_tareas/models/models.dart';
 import 'package:tus_tareas/pages/pages.dart';
 import 'package:tus_tareas/services/services.dart';
+import 'package:tus_tareas/widgets/complete_incidence_card.dart';
 import 'package:tus_tareas/widgets/widgets.dart';
 
-class Home extends StatelessWidget {
-  const Home({super.key});
+import '../data/menu_items.dart';
+import '../data/menu_task.dart';
+
+class IncidencePage extends StatelessWidget {
+  const IncidencePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final tasksService = Provider.of<TaskService>(context);
+    final incidenceService = Provider.of<IncidenceService>(context);
     final authService = Provider.of<AuthService>(context);
 
-    if (tasksService.isLoading) return Loading();
+    if (incidenceService.isLoading) return Loading();
 
     DateTime now = DateTime.now();
     initializeDateFormatting();
@@ -46,21 +49,21 @@ class Home extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
             child: Text(
-              'Vencidas',
+              'Asignadas',
               style: TextStyle(fontSize: 20),
             ),
           ),
           ListView.builder(
               shrinkWrap: true,
               physics: ScrollPhysics(),
-              itemCount: tasksService.vencidas.length,
+              itemCount: incidenceService.incidences.length,
               itemBuilder: (BuildContext context, int index) => GestureDetector(
                     onTap: () {
-                      final task = tasksService.selectedTask =
-                          tasksService.vencidas[index].copy();
+                      final incidence = incidenceService.selectedIncidence =
+                          incidenceService.incidences[index].copy();
 
                       final DateTime date;
-                      date = DateTime.parse(task.fecha);
+                      date = DateTime.parse(incidence.fecha);
 
                       showSlidingBottomSheet(context,
                           builder: (context) => SlidingSheetDialog(
@@ -80,17 +83,17 @@ class Home extends StatelessWidget {
                                         children: [
                                           Row(
                                             children: [
-                                              Text(task.titulo,
+                                              Text(incidence.titulo,
                                                   style:
                                                       TextStyle(fontSize: 20)),
                                               Spacer(),
                                               PopupMenuButton<MenuItemModel>(
                                                   onSelected: (item) =>
-                                                      onSelectedMenuTask(
+                                                      onSelectedMenuIncidence(
                                                           context,
                                                           item,
-                                                          task,
-                                                          tasksService),
+                                                          incidence,
+                                                          incidenceService),
                                                   itemBuilder: (context) => [
                                                         ...MenuTasks.itemsFirst
                                                             .map(buildItem)
@@ -126,30 +129,12 @@ class Home extends StatelessWidget {
                                             color: Color.fromARGB(
                                                 255, 184, 181, 181),
                                           ),
-                                          Text('''Descripcion de la tarea''',
+                                          Text(
+                                              incidence.detalles ??
+                                                  'Detalles de la Insidencia',
                                               style: TextStyle(fontSize: 18),
                                               textAlign: TextAlign.start),
                                           SizedBox(height: 30),
-                                          const Divider(
-                                            height: 20,
-                                            thickness: 1,
-                                            color: Color.fromARGB(
-                                                255, 184, 181, 181),
-                                          ),
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                alignment: Alignment.centerLeft,
-                                                onPressed: (() {}),
-                                                icon: Icon(Icons.add),
-                                                color: Colors.indigo,
-                                              ),
-                                              Text('Agregar sub tarea',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                  ))
-                                            ],
-                                          ),
                                           const Divider(
                                             height: 20,
                                             thickness: 1,
@@ -175,20 +160,6 @@ class Home extends StatelessWidget {
                                             thickness: 1,
                                             color: Color.fromARGB(
                                                 255, 184, 181, 181),
-                                          ),
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                alignment: Alignment.centerLeft,
-                                                onPressed: (() {}),
-                                                icon: Icon(Icons.attach_file),
-                                                color: Colors.indigo,
-                                              ),
-                                              Text('Añadir archivo',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                  ))
-                                            ],
                                           ),
                                           const Divider(
                                             height: 20,
@@ -230,191 +201,8 @@ class Home extends StatelessWidget {
                                 headerBuilder: headerSheet,
                               ));
                     },
-                    child: TaskCard(
-                      task: tasksService.vencidas[index],
-                    ),
-                  )),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-            child: Text(
-              'Hoy',
-              style: TextStyle(fontSize: 20),
-            ),
-          ),
-          ListView.builder(
-              shrinkWrap: true,
-              physics: ScrollPhysics(),
-              itemCount: tasksService.hoy.length,
-              itemBuilder: (BuildContext context, int index) => GestureDetector(
-                    onTap: () {
-                      final task = tasksService.selectedTask =
-                          tasksService.hoy[index].copy();
-
-                      final DateTime date;
-                      date = DateTime.parse(task.fecha);
-
-                      showSlidingBottomSheet(context,
-                          builder: (context) => SlidingSheetDialog(
-                                cornerRadius: 16,
-                                color: Colors.black12,
-                                avoidStatusBar: true,
-                                snapSpec: SnapSpec(
-                                  initialSnap: 0.6,
-                                  snappings: [0.6, 0.7],
-                                ),
-                                builder: ((context, state) {
-                                  return Material(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20),
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text(task.titulo,
-                                                  style:
-                                                      TextStyle(fontSize: 20)),
-                                              Spacer(),
-                                              IconButton(
-                                                  onPressed: (() {}),
-                                                  icon: Icon(
-                                                      Icons.more_vert_rounded))
-                                            ],
-                                          ),
-                                          const Divider(
-                                            height: 20,
-                                            thickness: 1,
-                                            color: Color.fromARGB(
-                                                255, 184, 181, 181),
-                                          ),
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                alignment: Alignment.centerLeft,
-                                                onPressed: (() {}),
-                                                icon: Icon(Icons.today),
-                                                color: Colors.indigo,
-                                              ),
-                                              Text(
-                                                  DateFormat.yMMMMd('es')
-                                                      .format(date),
-                                                  style: TextStyle(
-                                                      fontSize: 18,
-                                                      color: Colors.indigo))
-                                            ],
-                                          ),
-                                          const Divider(
-                                            height: 20,
-                                            thickness: 1,
-                                            color: Color.fromARGB(
-                                                255, 184, 181, 181),
-                                          ),
-                                          Text('''Descripcion de la tarea''',
-                                              style: TextStyle(fontSize: 18),
-                                              textAlign: TextAlign.start),
-                                          SizedBox(height: 30),
-                                          const Divider(
-                                            height: 20,
-                                            thickness: 1,
-                                            color: Color.fromARGB(
-                                                255, 184, 181, 181),
-                                          ),
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                alignment: Alignment.centerLeft,
-                                                onPressed: (() {}),
-                                                icon: Icon(Icons.add),
-                                                color: Colors.indigo,
-                                              ),
-                                              Text('Agregar sub tarea',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                  ))
-                                            ],
-                                          ),
-                                          const Divider(
-                                            height: 20,
-                                            thickness: 1,
-                                            color: Color.fromARGB(
-                                                255, 184, 181, 181),
-                                          ),
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                alignment: Alignment.centerLeft,
-                                                onPressed: (() {}),
-                                                icon: Icon(Icons.alarm),
-                                                color: Colors.indigo,
-                                              ),
-                                              Text('Crear Recordatorio',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                  ))
-                                            ],
-                                          ),
-                                          const Divider(
-                                            height: 20,
-                                            thickness: 1,
-                                            color: Color.fromARGB(
-                                                255, 184, 181, 181),
-                                          ),
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                alignment: Alignment.centerLeft,
-                                                onPressed: (() {}),
-                                                icon: Icon(Icons.attach_file),
-                                                color: Colors.indigo,
-                                              ),
-                                              Text('Añadir archivo',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                  ))
-                                            ],
-                                          ),
-                                          const Divider(
-                                            height: 20,
-                                            thickness: 1,
-                                            color: Color.fromARGB(
-                                                255, 184, 181, 181),
-                                          ),
-                                          SizedBox(
-                                            height: 30,
-                                          ),
-                                          MaterialButton(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              disabledColor: Colors.grey,
-                                              elevation: 0,
-                                              color: Colors.indigo,
-                                              child: Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 30,
-                                                    vertical: 15),
-                                                child: Text(
-                                                  'Marcar como completada',
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      color: Colors.white),
-                                                ),
-                                              ),
-                                              onPressed: () {}),
-                                          SizedBox(
-                                            height: 200,
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                }),
-                                headerBuilder: headerSheet,
-                              ));
-                    },
-                    child: TaskCard(
-                      task: tasksService.hoy[index],
+                    child: IncidenceCard(
+                      task: incidenceService.incidences[index],
                     ),
                   )),
           Padding(
@@ -427,14 +215,14 @@ class Home extends StatelessWidget {
           ListView.builder(
               shrinkWrap: true,
               physics: ScrollPhysics(),
-              itemCount: tasksService.completadas.length,
+              itemCount: incidenceService.completadas.length,
               itemBuilder: (BuildContext context, int index) => GestureDetector(
                     onTap: () {
-                      final task = tasksService.selectedTask =
-                          tasksService.completadas[index].copy();
+                      final incidence = incidenceService.selectedIncidence =
+                          incidenceService.completadas[index].copy();
 
                       final DateTime date;
-                      date = DateTime.parse(task.fecha);
+                      date = DateTime.parse(incidence.fecha);
 
                       showSlidingBottomSheet(context,
                           builder: (context) => SlidingSheetDialog(
@@ -454,15 +242,22 @@ class Home extends StatelessWidget {
                                         children: [
                                           Row(
                                             children: [
-                                              Text(
-                                                task.titulo,
-                                                style: TextStyle(fontSize: 20),
-                                              ),
+                                              Text(incidence.titulo,
+                                                  style:
+                                                      TextStyle(fontSize: 20)),
                                               Spacer(),
-                                              IconButton(
-                                                  onPressed: (() {}),
-                                                  icon: Icon(
-                                                      Icons.more_vert_rounded))
+                                              PopupMenuButton<MenuItemModel>(
+                                                  onSelected: (item) =>
+                                                      onSelectedMenuIncidence(
+                                                          context,
+                                                          item,
+                                                          incidence,
+                                                          incidenceService),
+                                                  itemBuilder: (context) => [
+                                                        ...MenuTasks.itemsFirst
+                                                            .map(buildItem)
+                                                            .toList(),
+                                                      ])
                                             ],
                                           ),
                                           const Divider(
@@ -493,30 +288,12 @@ class Home extends StatelessWidget {
                                             color: Color.fromARGB(
                                                 255, 184, 181, 181),
                                           ),
-                                          Text('''Descripcion de la tarea''',
+                                          Text(
+                                              incidence.detalles ??
+                                                  'Detalles de la Insidencia',
                                               style: TextStyle(fontSize: 18),
                                               textAlign: TextAlign.start),
                                           SizedBox(height: 30),
-                                          const Divider(
-                                            height: 20,
-                                            thickness: 1,
-                                            color: Color.fromARGB(
-                                                255, 184, 181, 181),
-                                          ),
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                alignment: Alignment.centerLeft,
-                                                onPressed: (() {}),
-                                                icon: Icon(Icons.add),
-                                                color: Colors.indigo,
-                                              ),
-                                              Text('Agregar sub tarea',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                  ))
-                                            ],
-                                          ),
                                           const Divider(
                                             height: 20,
                                             thickness: 1,
@@ -542,20 +319,6 @@ class Home extends StatelessWidget {
                                             thickness: 1,
                                             color: Color.fromARGB(
                                                 255, 184, 181, 181),
-                                          ),
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                alignment: Alignment.centerLeft,
-                                                onPressed: (() {}),
-                                                icon: Icon(Icons.attach_file),
-                                                color: Colors.indigo,
-                                              ),
-                                              Text('Añadir archivo',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                  ))
-                                            ],
                                           ),
                                           const Divider(
                                             height: 20,
@@ -597,8 +360,8 @@ class Home extends StatelessWidget {
                                 headerBuilder: headerSheet,
                               ));
                     },
-                    child: CompleteTaskCard(
-                      task: tasksService.completadas[index],
+                    child: CompleteIncidenceCard(
+                      task: incidenceService.completadas[index],
                     ),
                   )),
         ],
@@ -610,11 +373,13 @@ class Home extends StatelessWidget {
         ),
         onPressed: () {
           DateTime date = DateTime.now();
-          tasksService.selectedTask = new Tasks(
-              estado: 'pendiente',
+          incidenceService.selectedIncidence = new Incidence(
+              detalles: '''Detalles de la Incidencia''',
+              responable: 'ejemplo@gmail.com',
+              estado: 'asignada',
               fecha: DateFormat('yyyy-MM-dd').format(date),
               titulo: 'Nueva Tarea');
-          Navigator.pushNamed(context, 'task');
+          Navigator.pushNamed(context, 'createIncidence');
         },
       ),
     );
@@ -636,46 +401,46 @@ class Home extends StatelessWidget {
           SizedBox(height: 16),
         ]),
       );
+}
 
-  PopupMenuItem<MenuItemModel> buildItem(MenuItemModel item) =>
-      PopupMenuItem<MenuItemModel>(
-          value: item,
-          child: Row(
-            children: [
-              Icon(item.icon),
-              SizedBox(width: 10),
-              Text(
-                item.text,
-                style: TextStyle(fontSize: 18),
-              ),
-            ],
-          ));
+PopupMenuItem<MenuItemModel> buildItem(MenuItemModel item) =>
+    PopupMenuItem<MenuItemModel>(
+        value: item,
+        child: Row(
+          children: [
+            Icon(item.icon),
+            SizedBox(width: 10),
+            Text(
+              item.text,
+              style: TextStyle(fontSize: 18),
+            ),
+          ],
+        ));
 
-  void onSelectedMenu(
-      BuildContext context, MenuItemModel item, AuthService authService) {
-    switch (item) {
-      case MenuItems.itemSettings:
-        print('Prueba Menu Top bar');
-        break;
-      case MenuItems.itemSignOut:
-        authService.logout();
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => Login()), (route) => false);
-        break;
-    }
+void onSelectedMenu(
+    BuildContext context, MenuItemModel item, AuthService authService) {
+  switch (item) {
+    case MenuItems.itemSettings:
+      print('Prueba Menu Top bar');
+      break;
+    case MenuItems.itemSignOut:
+      authService.logout();
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()), (route) => false);
+      break;
   }
+}
 
-  Future<void> onSelectedMenuTask(BuildContext context, MenuItemModel item,
-      Tasks task, TaskService taskService) async {
-    switch (item) {
-      case MenuTasks.itemUpdate:
-        taskService.selectedTask = task;
-        Navigator.pushNamed(context, 'task');
-        break;
-      case MenuTasks.itemDelete:
-        await taskService.onDeleteTask(task);
-        Navigator.of(context).pop();
-        break;
-    }
+Future<void> onSelectedMenuIncidence(BuildContext context, MenuItemModel item,
+    Incidence incidence, IncidenceService incidenceService) async {
+  switch (item) {
+    case MenuTasks.itemUpdate:
+      incidenceService.selectedIncidence = incidence;
+      Navigator.pushNamed(context, 'createIncidence');
+      break;
+    case MenuTasks.itemDelete:
+      await incidenceService.onDeleteIncidence(incidence);
+      Navigator.of(context).pop();
+      break;
   }
 }

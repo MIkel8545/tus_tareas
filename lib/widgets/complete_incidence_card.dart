@@ -5,21 +5,21 @@ import 'package:tus_tareas/models/models.dart';
 
 import '../services/services.dart';
 
-class TaskCard extends StatefulWidget {
-  final Tasks task;
+class CompleteIncidenceCard extends StatefulWidget {
+  final Incidence task;
 
-  const TaskCard({super.key, required this.task});
+  const CompleteIncidenceCard({super.key, required this.task});
 
   @override
-  State<TaskCard> createState() => _TaskCardState();
+  State<CompleteIncidenceCard> createState() => _CompleteIncidenceCardState();
 }
 
-class _TaskCardState extends State<TaskCard> {
+class _CompleteIncidenceCardState extends State<CompleteIncidenceCard> {
   @override
   Widget build(BuildContext context) {
-    final tasksService = Provider.of<TaskService>(context);
+    final incidenceService = Provider.of<IncidenceService>(context);
     final authService = Provider.of<AuthService>(context);
-    bool isChecked = false;
+    bool isChecked = true;
     final DateTime date;
     date = DateTime.parse(widget.task.fecha);
     return Padding(
@@ -35,17 +35,18 @@ class _TaskCardState extends State<TaskCard> {
               alignment: Alignment.centerLeft,
               children: [
                 Checkbox(
+                  activeColor: Colors.indigo,
                   shape: CircleBorder(),
                   value: isChecked,
-                  onChanged: (value) async {
+                  onChanged: (bool? value) async {
                     setState(() {
                       isChecked = value!;
                       print(widget.task.estado);
                     });
-                    widget.task.estado = 'completada';
+                    widget.task.estado = 'asignada';
                     print(widget.task.estado);
 
-                    await tasksService.onCompleteTasks(widget.task);
+                    await incidenceService.onUncompleteTasks(widget.task);
                   },
                 ),
               ],
@@ -56,7 +57,8 @@ class _TaskCardState extends State<TaskCard> {
               children: [
                 Text(
                   widget.task.titulo,
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(
+                      fontSize: 18, decoration: TextDecoration.lineThrough),
                   textAlign: TextAlign.start,
                 ),
                 Row(
@@ -70,6 +72,7 @@ class _TaskCardState extends State<TaskCard> {
                     Text(
                       DateFormat.MMMMd('es').format(date),
                       style: TextStyle(
+                          decoration: TextDecoration.lineThrough,
                           color: Color.fromARGB(255, 115, 141, 228),
                           fontSize: 20),
                     ),

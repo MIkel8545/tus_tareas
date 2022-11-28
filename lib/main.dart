@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tus_tareas/pages/create_incidence.dart';
 import 'package:tus_tareas/pages/pages.dart';
 import 'package:tus_tareas/pages/register.dart';
-import 'package:tus_tareas/services/task_service.dart';
+
+import 'package:tus_tareas/services/services.dart';
+import 'package:tus_tareas/theme/theme.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'services/services.dart';
 
 void main() {
   runApp(const AppState());
@@ -14,7 +20,12 @@ class AppState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => TaskService())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => IncidenceService()),
+        ChangeNotifierProvider(create: (_) => TeamService()),
+        ChangeNotifierProvider(create: (_) => TaskService()),
+        ChangeNotifierProvider(create: (_) => AuthService()),
+      ],
       child: MyApp(),
     );
   }
@@ -27,15 +38,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: [GlobalMaterialLocalizations.delegate],
+      supportedLocales: [const Locale('en'), const Locale('es')],
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData.dark().copyWith(
-          scaffoldBackgroundColor: Colors.black,
-          appBarTheme: AppBarTheme(elevation: 0, color: Colors.black),
-          floatingActionButtonTheme:
-              FloatingActionButtonThemeData(backgroundColor: Colors.indigo)),
-      initialRoute: 'login',
+      title: 'Tus Tareas',
+      scaffoldMessengerKey: AlertService.messengerKey,
+      theme: miTema,
+      initialRoute: 'checking',
       routes: {
+        'createIncidence': (_) => CreateIncidence(),
+        'incidence': (_) => IncidencePage(),
+        'createTeam': (_) => CreateTeamPage(),
+        'teams': (_) => Teams(),
+        'tabs': (_) => TabsPage(),
+        'checking': (_) => CheckAuth(),
         'login': (_) => Login(),
         'home': (_) => Home(),
         'register': (_) => Register(),

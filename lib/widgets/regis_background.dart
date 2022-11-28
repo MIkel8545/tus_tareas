@@ -14,25 +14,8 @@ class RegisterBackground extends StatelessWidget {
       child: Stack(children: [
         Box2(),
         _HeaderIcon(),
-        _HeaderText(),
         this.child,
       ]),
-    );
-  }
-}
-
-class _HeaderText extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 50, left: 60),
-      child: const Text(
-        '''
-        Registrarse
-        ''',
-        style: TextStyle(color: Colors.white, fontSize: 30),
-        maxLines: 2,
-      ),
     );
   }
 }
@@ -45,7 +28,7 @@ class _HeaderIcon extends StatelessWidget {
         children: [
           Container(
             width: double.infinity,
-            margin: EdgeInsets.only(top: 120),
+            margin: EdgeInsets.only(top: 50),
             child: Icon(Icons.edit_note, color: Colors.indigo, size: 100),
           ),
         ],

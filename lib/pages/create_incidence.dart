@@ -1,36 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:tus_tareas/provider/incidence_form_provider.dart';
 import 'package:tus_tareas/provider/task_form_provider.dart';
 import 'package:tus_tareas/services/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../decoration/input_decorations.dart';
 
-class TaskPage extends StatelessWidget {
-  const TaskPage({super.key});
+class CreateIncidence extends StatelessWidget {
+  const CreateIncidence({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final taskService = Provider.of<TaskService>(context);
+    final incidenceService = Provider.of<IncidenceService>(context);
 
     return ChangeNotifierProvider(
-        create: (_) => TaskFormProvider(taskService.selectedTask),
-        child: _TaskPageBody(taskService: taskService));
+        create: (_) =>
+            IncidenceFormProvider(incidenceService.selectedIncidence),
+        child: _IncidencePageBody(incidenceService: incidenceService));
   }
 }
 
-class _TaskPageBody extends StatelessWidget {
-  const _TaskPageBody({
+class _IncidencePageBody extends StatelessWidget {
+  const _IncidencePageBody({
     Key? key,
-    required this.taskService,
+    required this.incidenceService,
   }) : super(key: key);
 
-  final TaskService taskService;
+  final IncidenceService incidenceService;
 
   @override
   Widget build(BuildContext context) {
-    final taskForm = Provider.of<TaskFormProvider>(context);
+    final incidenceForm = Provider.of<IncidenceFormProvider>(context);
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
@@ -40,14 +42,14 @@ class _TaskPageBody extends StatelessWidget {
             children: [
               Center(
                 child: Text(
-                  ' Crear Tarea ',
+                  ' Crear Insidencia ',
                   style: TextStyle(fontSize: 30),
                 ),
               ),
             ],
           ),
           SizedBox(height: 100),
-          _TaskForm(),
+          _IncidenceForm(),
           MaterialButton(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
@@ -57,12 +59,13 @@ class _TaskPageBody extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                 child: Text(
-                  'Crear Tarea',
+                  'Crear Insidencia',
                   style: TextStyle(color: Colors.white),
                 ),
               ),
               onPressed: () async {
-                await taskService.saveOnCreateTask(taskForm.task);
+                await incidenceService
+                    .saveOnCreateTask(incidenceForm.incidence);
                 Navigator.of(context).pop();
               }),
         ],
@@ -71,19 +74,19 @@ class _TaskPageBody extends StatelessWidget {
   }
 }
 
-class _TaskForm extends StatefulWidget {
+class _IncidenceForm extends StatefulWidget {
   @override
-  State<_TaskForm> createState() => _TaskFormState();
+  State<_IncidenceForm> createState() => _IncidenceFormState();
 }
 
-class _TaskFormState extends State<_TaskForm> {
+class _IncidenceFormState extends State<_IncidenceForm> {
   DateTime date = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
-    final taskForm = Provider.of<TaskFormProvider>(context);
-    final task = taskForm.task;
-    final TaskService taskService;
+    final incidenceForm = Provider.of<IncidenceFormProvider>(context);
+    final incidence = incidenceForm.incidence;
+    final IncidenceService incidenceService;
     String fecha = DateFormat('yyyy-MM-dd').format(date);
     var txt = TextEditingController();
     txt.text = DateFormat('yyyy-MM-dd').format(date);
@@ -94,15 +97,15 @@ class _TaskFormState extends State<_TaskForm> {
         width: double.infinity,
         decoration: _buildBoxDecoration(),
         child: Form(
-            key: taskForm.formkey,
+            key: incidenceForm.formkey,
             child: Column(
               children: [
                 TextFormField(
                   autocorrect: false,
                   keyboardType: TextInputType.emailAddress,
                   style: const TextStyle(color: Colors.white),
-                  initialValue: '${task.titulo}',
-                  onChanged: (value) => task.titulo = value,
+                  initialValue: '${incidence.titulo}',
+                  onChanged: (value) => incidence.titulo = value,
                   decoration: InputDecorations.authInputDecoration(
                       hintText: 'Nombre de la Tarea',
                       labelText: 'Nombre',
@@ -110,13 +113,37 @@ class _TaskFormState extends State<_TaskForm> {
                 ),
                 SizedBox(height: 30),
                 TextFormField(
+                  autocorrect: false,
+                  keyboardType: TextInputType.emailAddress,
+                  style: const TextStyle(color: Colors.white),
+                  initialValue: '${incidence.detalles}',
+                  onChanged: (value) => incidence.detalles = value,
+                  decoration: InputDecorations.authInputDecoration(
+                      hintText: 'Detalles de la tarea',
+                      labelText: 'Detalles',
+                      prefixIcon: Icons.task),
+                ),
+                SizedBox(height: 30),
+                TextFormField(
+                  autocorrect: false,
+                  keyboardType: TextInputType.emailAddress,
+                  style: const TextStyle(color: Colors.white),
+                  initialValue: '${incidence.responable}',
+                  onChanged: (value) => incidence.responable = value,
+                  decoration: InputDecorations.authInputDecoration(
+                      hintText: 'ejemplo@gmail.com',
+                      labelText: 'Responsable',
+                      prefixIcon: Icons.task),
+                ),
+                SizedBox(height: 30),
+                TextFormField(
                   controller: txt,
                   autocorrect: false,
                   keyboardType: TextInputType.none,
-                  onChanged: (value) => task.fecha = value,
+                  onChanged: (value) => incidence.fecha = value,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecorations.authInputDecoration(
-                      hintText: 'Fecha de la tarea',
+                      hintText: 'Fecha de la insidencia',
                       labelText: 'Fecha',
                       prefixIcon: Icons.date_range),
                   onTap: () async {
@@ -133,7 +160,7 @@ class _TaskFormState extends State<_TaskForm> {
                       date = newDate;
                       fecha = DateFormat('yyyy-MM-dd').format(date);
                       txt.text = fecha;
-                      task.fecha = fecha;
+                      incidence.fecha = fecha;
                     });
                   },
                 ),

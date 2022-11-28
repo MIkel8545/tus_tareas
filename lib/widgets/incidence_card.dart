@@ -5,19 +5,19 @@ import 'package:tus_tareas/models/models.dart';
 
 import '../services/services.dart';
 
-class TaskCard extends StatefulWidget {
-  final Tasks task;
+class IncidenceCard extends StatefulWidget {
+  final Incidence task;
 
-  const TaskCard({super.key, required this.task});
+  const IncidenceCard({super.key, required this.task});
 
   @override
-  State<TaskCard> createState() => _TaskCardState();
+  State<IncidenceCard> createState() => _IncidenceCardState();
 }
 
-class _TaskCardState extends State<TaskCard> {
+class _IncidenceCardState extends State<IncidenceCard> {
   @override
   Widget build(BuildContext context) {
-    final tasksService = Provider.of<TaskService>(context);
+    final incidenceService = Provider.of<IncidenceService>(context);
     final authService = Provider.of<AuthService>(context);
     bool isChecked = false;
     final DateTime date;
@@ -45,7 +45,7 @@ class _TaskCardState extends State<TaskCard> {
                     widget.task.estado = 'completada';
                     print(widget.task.estado);
 
-                    await tasksService.onCompleteTasks(widget.task);
+                    await incidenceService.onCompleteIncidence(widget.task);
                   },
                 ),
               ],

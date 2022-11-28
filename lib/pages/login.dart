@@ -5,6 +5,8 @@ import 'package:tus_tareas/pages/register.dart';
 import 'package:tus_tareas/provider/login_form_provider.dart';
 import 'package:tus_tareas/widgets/widgets.dart';
 
+import '../services/services.dart';
+
 class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -51,7 +53,7 @@ class Login extends StatelessWidget {
               ),
             ),
             onPressed: () {
-              Navigator.pushReplacementNamed(context, 'home');
+              Navigator.pushReplacementNamed(context, 'tabs');
             },
           ),
           SizedBox(height: 20),
@@ -67,7 +69,7 @@ class Login extends StatelessWidget {
               ),
             ),
             onPressed: () {
-              Navigator.pushReplacementNamed(context, 'home');
+              Navigator.pushReplacementNamed(context, 'tabs');
             },
           )
         ],
@@ -93,7 +95,7 @@ class _LoginForm extends StatelessWidget {
               style: const TextStyle(color: Colors.white),
               decoration: InputDecorations.authInputDecoration(
                   hintText: 'ejemplo@gmail.com',
-                  labelText: 'Correo Elrectronico',
+                  labelText: 'Correo Electronico',
                   prefixIcon: Icons.alternate_email_rounded),
               onChanged: (value) => loginForm.email = value,
               validator: (value) {
@@ -142,13 +144,24 @@ class _LoginForm extends StatelessWidget {
                     ? null
                     : () async {
                         FocusScope.of(context).unfocus();
+
+                        final authService =
+                            Provider.of<AuthService>(context, listen: false);
+
                         if (!loginForm.isValidForm()) return;
 
                         loginForm.isLoading = true;
 
-                        Future.delayed(Duration(seconds: 2));
+                        final String? error = await authService.login(
+                            loginForm.email, loginForm.password);
 
-                        Navigator.pushReplacementNamed(context, 'home');
+                        if (error == null) {
+                          Navigator.pushReplacementNamed(context, 'tabs');
+                        } else {
+                          AlertService.showSnackBar(
+                              "El usuario no existe o las creadenciales son invalidas");
+                          loginForm.isLoading = false;
+                        }
                       }),
           ],
         ),
