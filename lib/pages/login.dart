@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tus_tareas/decoration/input_decorations.dart';
 import 'package:tus_tareas/pages/register.dart';
@@ -10,6 +12,7 @@ import '../services/services.dart';
 class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final googleService = Provider.of<SignInWithGoogleService>(context);
     return Scaffold(
         body: AuthBackground(
             child: SingleChildScrollView(
@@ -41,20 +44,39 @@ class Login extends StatelessWidget {
             color: Color.fromARGB(255, 184, 181, 181),
           ),
           const SizedBox(height: 20),
-          OutlinedButton(
-            style: OutlinedButton.styleFrom(
-              side: const BorderSide(width: 1.0, color: Colors.indigo),
-            ),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
-              child: const Text(
-                'Iniciar Sesion con Google',
-                style: TextStyle(color: Colors.white),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(width: 1.0, color: Colors.indigo),
               ),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    FaIcon(FontAwesomeIcons.google, color: Colors.indigo),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    const Text(
+                      'Iniciar Sesion con Google',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+              onPressed: () {
+                googleService.googleLogin();
+                final user = FirebaseAuth.instance.currentUser!;
+
+                if (user != null) {
+                  Navigator.pushReplacementNamed(context, 'tabs');
+                }
+              },
             ),
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, 'tabs');
-            },
           ),
           SizedBox(height: 20),
           OutlinedButton(

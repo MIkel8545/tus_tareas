@@ -5,14 +5,20 @@ import 'package:provider/provider.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:tus_tareas/data/menu_items.dart';
 import 'package:tus_tareas/data/menu_task.dart';
+import 'package:tus_tareas/data/notifications.dart';
 import 'package:tus_tareas/models/models.dart';
 import 'package:tus_tareas/pages/pages.dart';
 import 'package:tus_tareas/services/services.dart';
 import 'package:tus_tareas/widgets/widgets.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
 
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final tasksService = Provider.of<TaskService>(context);
@@ -26,7 +32,7 @@ class Home extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          DateFormat.yMMMMd('es').format(now),
+          'Hoy ' + DateFormat.MMMMd('es').format(now),
           style: TextStyle(
               color: Color.fromARGB(255, 115, 141, 228), fontSize: 23),
         ),
@@ -126,7 +132,9 @@ class Home extends StatelessWidget {
                                             color: Color.fromARGB(
                                                 255, 184, 181, 181),
                                           ),
-                                          Text('''Descripcion de la tarea''',
+                                          Text(
+                                              task.detalles ??
+                                                  'No tiene descripción',
                                               style: TextStyle(fontSize: 18),
                                               textAlign: TextAlign.start),
                                           SizedBox(height: 30),
@@ -136,89 +144,60 @@ class Home extends StatelessWidget {
                                             color: Color.fromARGB(
                                                 255, 184, 181, 181),
                                           ),
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                alignment: Alignment.centerLeft,
-                                                onPressed: (() {}),
-                                                icon: Icon(Icons.add),
-                                                color: Colors.indigo,
-                                              ),
-                                              Text('Agregar sub tarea',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                  ))
-                                            ],
-                                          ),
-                                          const Divider(
-                                            height: 20,
-                                            thickness: 1,
-                                            color: Color.fromARGB(
-                                                255, 184, 181, 181),
-                                          ),
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                alignment: Alignment.centerLeft,
-                                                onPressed: (() {}),
-                                                icon: Icon(Icons.alarm),
-                                                color: Colors.indigo,
-                                              ),
-                                              Text('Crear Recordatorio',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                  ))
-                                            ],
-                                          ),
-                                          const Divider(
-                                            height: 20,
-                                            thickness: 1,
-                                            color: Color.fromARGB(
-                                                255, 184, 181, 181),
-                                          ),
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                alignment: Alignment.centerLeft,
-                                                onPressed: (() {}),
-                                                icon: Icon(Icons.attach_file),
-                                                color: Colors.indigo,
-                                              ),
-                                              Text('Añadir archivo',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                  ))
-                                            ],
-                                          ),
-                                          const Divider(
-                                            height: 20,
-                                            thickness: 1,
-                                            color: Color.fromARGB(
-                                                255, 184, 181, 181),
-                                          ),
-                                          SizedBox(
-                                            height: 30,
-                                          ),
-                                          MaterialButton(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              disabledColor: Colors.grey,
-                                              elevation: 0,
-                                              color: Colors.indigo,
-                                              child: Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 30,
-                                                    vertical: 15),
-                                                child: Text(
-                                                  'Marcar como completada',
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      color: Colors.white),
-                                                ),
-                                              ),
-                                              onPressed: () {}),
+                                          TextButton(
+                                              onPressed: (() async {
+                                                TimeOfDay? picked =
+                                                    await showTimePicker(
+                                                  context: context,
+                                                  initialTime: TimeOfDay(
+                                                      hour: date.hour,
+                                                      minute: date.minute),
+                                                );
+                                                if (picked == null) return;
+                                                DateTime? newDate =
+                                                    await showDatePicker(
+                                                        locale: const Locale(
+                                                            'es', ''),
+                                                        context: context,
+                                                        initialDate: date,
+                                                        firstDate:
+                                                            DateTime(1900),
+                                                        lastDate:
+                                                            DateTime(2100));
+
+                                                if (newDate == null) return;
+
+                                                setState(() {
+                                                  final dateTime = DateTime(
+                                                      newDate.year,
+                                                      newDate.month,
+                                                      newDate.day,
+                                                      picked.hour,
+                                                      picked.minute);
+
+                                                  //  date = dateTime;
+
+                                                  createTaskReminderNotification(
+                                                      dateTime);
+                                                });
+                                              }),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.alarm,
+                                                    color: Colors.indigo,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 20,
+                                                  ),
+                                                  Text(
+                                                    'Crear Recordatorio',
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        color: Colors.white),
+                                                  ),
+                                                ],
+                                              )),
                                           SizedBox(
                                             height: 200,
                                           )
@@ -275,10 +254,18 @@ class Home extends StatelessWidget {
                                                   style:
                                                       TextStyle(fontSize: 20)),
                                               Spacer(),
-                                              IconButton(
-                                                  onPressed: (() {}),
-                                                  icon: Icon(
-                                                      Icons.more_vert_rounded))
+                                              PopupMenuButton<MenuItemModel>(
+                                                  onSelected: (item) =>
+                                                      onSelectedMenuTask(
+                                                          context,
+                                                          item,
+                                                          task,
+                                                          tasksService),
+                                                  itemBuilder: (context) => [
+                                                        ...MenuTasks.itemsFirst
+                                                            .map(buildItem)
+                                                            .toList(),
+                                                      ])
                                             ],
                                           ),
                                           const Divider(
@@ -309,7 +296,9 @@ class Home extends StatelessWidget {
                                             color: Color.fromARGB(
                                                 255, 184, 181, 181),
                                           ),
-                                          Text('''Descripcion de la tarea''',
+                                          Text(
+                                              task.detalles ??
+                                                  'No tiene descripción',
                                               style: TextStyle(fontSize: 18),
                                               textAlign: TextAlign.start),
                                           SizedBox(height: 30),
@@ -319,89 +308,66 @@ class Home extends StatelessWidget {
                                             color: Color.fromARGB(
                                                 255, 184, 181, 181),
                                           ),
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                alignment: Alignment.centerLeft,
-                                                onPressed: (() {}),
-                                                icon: Icon(Icons.add),
-                                                color: Colors.indigo,
-                                              ),
-                                              Text('Agregar sub tarea',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                  ))
-                                            ],
-                                          ),
+                                          TextButton(
+                                              onPressed: (() async {
+                                                TimeOfDay? picked =
+                                                    await showTimePicker(
+                                                  context: context,
+                                                  initialTime: TimeOfDay(
+                                                      hour: date.hour,
+                                                      minute: date.minute),
+                                                );
+                                                if (picked == null) return;
+                                                DateTime? newDate =
+                                                    await showDatePicker(
+                                                        locale: const Locale(
+                                                            'es', ''),
+                                                        context: context,
+                                                        initialDate: date,
+                                                        firstDate:
+                                                            DateTime(1900),
+                                                        lastDate:
+                                                            DateTime(2100));
+
+                                                if (newDate == null) return;
+
+                                                setState(() {
+                                                  final dateTime = DateTime(
+                                                      newDate.year,
+                                                      newDate.month,
+                                                      newDate.day,
+                                                      picked.hour,
+                                                      picked.minute);
+
+                                                  //  date = dateTime;
+
+                                                  createTaskReminderNotification(
+                                                      dateTime);
+                                                });
+                                              }),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.alarm,
+                                                    color: Colors.indigo,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 20,
+                                                  ),
+                                                  Text(
+                                                    'Crear Recordatorio',
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        color: Colors.white),
+                                                  ),
+                                                ],
+                                              )),
                                           const Divider(
                                             height: 20,
                                             thickness: 1,
                                             color: Color.fromARGB(
                                                 255, 184, 181, 181),
                                           ),
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                alignment: Alignment.centerLeft,
-                                                onPressed: (() {}),
-                                                icon: Icon(Icons.alarm),
-                                                color: Colors.indigo,
-                                              ),
-                                              Text('Crear Recordatorio',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                  ))
-                                            ],
-                                          ),
-                                          const Divider(
-                                            height: 20,
-                                            thickness: 1,
-                                            color: Color.fromARGB(
-                                                255, 184, 181, 181),
-                                          ),
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                alignment: Alignment.centerLeft,
-                                                onPressed: (() {}),
-                                                icon: Icon(Icons.attach_file),
-                                                color: Colors.indigo,
-                                              ),
-                                              Text('Añadir archivo',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                  ))
-                                            ],
-                                          ),
-                                          const Divider(
-                                            height: 20,
-                                            thickness: 1,
-                                            color: Color.fromARGB(
-                                                255, 184, 181, 181),
-                                          ),
-                                          SizedBox(
-                                            height: 30,
-                                          ),
-                                          MaterialButton(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              disabledColor: Colors.grey,
-                                              elevation: 0,
-                                              color: Colors.indigo,
-                                              child: Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 30,
-                                                    vertical: 15),
-                                                child: Text(
-                                                  'Marcar como completada',
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      color: Colors.white),
-                                                ),
-                                              ),
-                                              onPressed: () {}),
                                           SizedBox(
                                             height: 200,
                                           )
@@ -459,10 +425,18 @@ class Home extends StatelessWidget {
                                                 style: TextStyle(fontSize: 20),
                                               ),
                                               Spacer(),
-                                              IconButton(
-                                                  onPressed: (() {}),
-                                                  icon: Icon(
-                                                      Icons.more_vert_rounded))
+                                              PopupMenuButton<MenuItemModel>(
+                                                  onSelected: (item) =>
+                                                      onSelectedMenuTask(
+                                                          context,
+                                                          item,
+                                                          task,
+                                                          tasksService),
+                                                  itemBuilder: (context) => [
+                                                        ...MenuTasks.itemsFirst
+                                                            .map(buildItem)
+                                                            .toList(),
+                                                      ])
                                             ],
                                           ),
                                           const Divider(
@@ -493,7 +467,9 @@ class Home extends StatelessWidget {
                                             color: Color.fromARGB(
                                                 255, 184, 181, 181),
                                           ),
-                                          Text('''Descripcion de la tarea''',
+                                          Text(
+                                              task.detalles ??
+                                                  'No tiene descripción',
                                               style: TextStyle(fontSize: 18),
                                               textAlign: TextAlign.start),
                                           SizedBox(height: 30),
@@ -503,89 +479,66 @@ class Home extends StatelessWidget {
                                             color: Color.fromARGB(
                                                 255, 184, 181, 181),
                                           ),
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                alignment: Alignment.centerLeft,
-                                                onPressed: (() {}),
-                                                icon: Icon(Icons.add),
-                                                color: Colors.indigo,
-                                              ),
-                                              Text('Agregar sub tarea',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                  ))
-                                            ],
-                                          ),
+                                          TextButton(
+                                              onPressed: (() async {
+                                                TimeOfDay? picked =
+                                                    await showTimePicker(
+                                                  context: context,
+                                                  initialTime: TimeOfDay(
+                                                      hour: date.hour,
+                                                      minute: date.minute),
+                                                );
+                                                if (picked == null) return;
+                                                DateTime? newDate =
+                                                    await showDatePicker(
+                                                        locale: const Locale(
+                                                            'es', ''),
+                                                        context: context,
+                                                        initialDate: date,
+                                                        firstDate:
+                                                            DateTime(1900),
+                                                        lastDate:
+                                                            DateTime(2100));
+
+                                                if (newDate == null) return;
+
+                                                setState(() {
+                                                  final dateTime = DateTime(
+                                                      newDate.year,
+                                                      newDate.month,
+                                                      newDate.day,
+                                                      picked.hour,
+                                                      picked.minute);
+
+                                                  //  date = dateTime;
+
+                                                  createTaskReminderNotification(
+                                                      dateTime);
+                                                });
+                                              }),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.alarm,
+                                                    color: Colors.indigo,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 20,
+                                                  ),
+                                                  Text(
+                                                    'Crear Recordatorio',
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        color: Colors.white),
+                                                  ),
+                                                ],
+                                              )),
                                           const Divider(
                                             height: 20,
                                             thickness: 1,
                                             color: Color.fromARGB(
                                                 255, 184, 181, 181),
                                           ),
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                alignment: Alignment.centerLeft,
-                                                onPressed: (() {}),
-                                                icon: Icon(Icons.alarm),
-                                                color: Colors.indigo,
-                                              ),
-                                              Text('Crear Recordatorio',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                  ))
-                                            ],
-                                          ),
-                                          const Divider(
-                                            height: 20,
-                                            thickness: 1,
-                                            color: Color.fromARGB(
-                                                255, 184, 181, 181),
-                                          ),
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                alignment: Alignment.centerLeft,
-                                                onPressed: (() {}),
-                                                icon: Icon(Icons.attach_file),
-                                                color: Colors.indigo,
-                                              ),
-                                              Text('Añadir archivo',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                  ))
-                                            ],
-                                          ),
-                                          const Divider(
-                                            height: 20,
-                                            thickness: 1,
-                                            color: Color.fromARGB(
-                                                255, 184, 181, 181),
-                                          ),
-                                          SizedBox(
-                                            height: 30,
-                                          ),
-                                          MaterialButton(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              disabledColor: Colors.grey,
-                                              elevation: 0,
-                                              color: Colors.indigo,
-                                              child: Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 30,
-                                                    vertical: 15),
-                                                child: Text(
-                                                  'Marcar como completada',
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      color: Colors.white),
-                                                ),
-                                              ),
-                                              onPressed: () {}),
                                           SizedBox(
                                             height: 200,
                                           )
@@ -612,6 +565,7 @@ class Home extends StatelessWidget {
           DateTime date = DateTime.now();
           tasksService.selectedTask = new Tasks(
               estado: 'pendiente',
+              detalles: 'Detalles de la Tarea',
               fecha: DateFormat('yyyy-MM-dd').format(date),
               titulo: 'Nueva Tarea');
           Navigator.pushNamed(context, 'task');

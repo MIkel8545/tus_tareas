@@ -27,7 +27,7 @@ class Teams extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          DateFormat.yMMMMd('es').format(now),
+          'Equipos',
           style: TextStyle(
               color: Color.fromARGB(255, 115, 141, 228), fontSize: 23),
         ),

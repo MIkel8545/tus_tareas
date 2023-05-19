@@ -1,3 +1,5 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tus_tareas/pages/create_incidence.dart';
@@ -7,10 +9,32 @@ import 'package:tus_tareas/pages/register.dart';
 import 'package:tus_tareas/services/services.dart';
 import 'package:tus_tareas/theme/theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
+import 'package:firebase_core/firebase_core.dart';
 import 'services/services.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  AwesomeNotifications().initialize(null, [
+    NotificationChannel(
+      channelKey: 'basic_chanel',
+      channelName: 'Basic Notifications',
+      defaultColor: Colors.indigo,
+      importance: NotificationImportance.High,
+      channelShowBadge: true,
+      channelDescription: 'Basic Chanel Notification',
+    ),
+    NotificationChannel(
+      channelKey: 'scheduled_chanel',
+      channelName: 'Scheduled Notifications',
+      locked: true,
+      defaultColor: Colors.indigo,
+      importance: NotificationImportance.High,
+      channelShowBadge: true,
+      channelDescription: 'Scheduled Chanel Notification',
+    )
+  ]);
   runApp(const AppState());
 }
 
@@ -21,6 +45,7 @@ class AppState extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => SignInWithGoogleService()),
         ChangeNotifierProvider(create: (_) => IncidenceService()),
         ChangeNotifierProvider(create: (_) => TeamService()),
         ChangeNotifierProvider(create: (_) => TaskService()),

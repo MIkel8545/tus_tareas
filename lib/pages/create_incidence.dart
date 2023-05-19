@@ -42,7 +42,7 @@ class _IncidencePageBody extends StatelessWidget {
             children: [
               Center(
                 child: Text(
-                  ' Crear Insidencia ',
+                  ' Crear Incidencia ',
                   style: TextStyle(fontSize: 30),
                 ),
               ),
@@ -59,7 +59,7 @@ class _IncidencePageBody extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                 child: Text(
-                  'Crear Insidencia',
+                  'Crear Incidencia',
                   style: TextStyle(color: Colors.white),
                 ),
               ),
@@ -107,21 +107,22 @@ class _IncidenceFormState extends State<_IncidenceForm> {
                   initialValue: '${incidence.titulo}',
                   onChanged: (value) => incidence.titulo = value,
                   decoration: InputDecorations.authInputDecoration(
-                      hintText: 'Nombre de la Tarea',
+                      hintText: 'Nombre de la Incidencia',
                       labelText: 'Nombre',
-                      prefixIcon: Icons.task),
+                      prefixIcon: Icons.list_alt_outlined),
                 ),
                 SizedBox(height: 30),
                 TextFormField(
+                  maxLines: 5,
                   autocorrect: false,
                   keyboardType: TextInputType.emailAddress,
                   style: const TextStyle(color: Colors.white),
                   initialValue: '${incidence.detalles}',
                   onChanged: (value) => incidence.detalles = value,
                   decoration: InputDecorations.authInputDecoration(
-                      hintText: 'Detalles de la tarea',
-                      labelText: 'Detalles',
-                      prefixIcon: Icons.task),
+                    hintText: 'Detalles de la Incidencia',
+                    labelText: 'Detalles',
+                  ),
                 ),
                 SizedBox(height: 30),
                 TextFormField(
@@ -133,7 +134,7 @@ class _IncidenceFormState extends State<_IncidenceForm> {
                   decoration: InputDecorations.authInputDecoration(
                       hintText: 'ejemplo@gmail.com',
                       labelText: 'Responsable',
-                      prefixIcon: Icons.task),
+                      prefixIcon: Icons.person),
                 ),
                 SizedBox(height: 30),
                 TextFormField(
@@ -143,7 +144,7 @@ class _IncidenceFormState extends State<_IncidenceForm> {
                   onChanged: (value) => incidence.fecha = value,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecorations.authInputDecoration(
-                      hintText: 'Fecha de la insidencia',
+                      hintText: 'Fecha de la incidencia',
                       labelText: 'Fecha',
                       prefixIcon: Icons.date_range),
                   onTap: () async {

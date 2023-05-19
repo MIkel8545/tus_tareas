@@ -110,6 +110,19 @@ class _TaskFormState extends State<_TaskForm> {
                 ),
                 SizedBox(height: 30),
                 TextFormField(
+                  maxLines: 5,
+                  autocorrect: false,
+                  keyboardType: TextInputType.multiline,
+                  style: const TextStyle(color: Colors.white),
+                  initialValue: '${task.detalles}',
+                  onChanged: (value) => task.detalles = value,
+                  decoration: InputDecorations.authInputDecoration(
+                    hintText: 'Detalles de la Tarea',
+                    labelText: 'Detalles',
+                  ),
+                ),
+                SizedBox(height: 30),
+                TextFormField(
                   controller: txt,
                   autocorrect: false,
                   keyboardType: TextInputType.none,

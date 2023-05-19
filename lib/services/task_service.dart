@@ -5,7 +5,8 @@ import 'package:tus_tareas/models/models.dart';
 import 'package:http/http.dart' as http;
 
 class TaskService extends ChangeNotifier {
-  final String _baseUrl = 'tareasapp-120e6-default-rtdb.firebaseio.com';
+  final String _baseUrl =
+      'https://tareasapp-120e6-default-rtdb.firebaseio.com/';
 
   final List<Tasks> tasks = [];
   final List<Tasks> vencidas = [];
@@ -355,7 +356,7 @@ class TaskService extends ChangeNotifier {
     final resp = await http.put(url, body: task.toJson());
     final decodedData = resp.body;
     final index =
-        this.pendientes.indexWhere((element) => element.id == task.id);
+        this.completadas.indexWhere((element) => element.id == task.id);
 
     pendientes.forEach((value) {
       final tempTask = value.titulo;

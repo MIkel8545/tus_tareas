@@ -70,7 +70,7 @@ class _RegisterForm extends StatelessWidget {
               style: const TextStyle(color: Colors.white),
               decoration: InputDecorations.authInputDecoration(
                   hintText: 'ejemplo@gmail.com',
-                  labelText: 'Correo Elrectronico',
+                  labelText: 'Correo Electronico',
                   prefixIcon: Icons.alternate_email_rounded),
               onChanged: (value) => registerForm.email = value,
               validator: (value) {
@@ -141,7 +141,7 @@ class _RegisterForm extends StatelessWidget {
                             registerForm.email, registerForm.password);
 
                         if (error == null) {
-                          Navigator.pushReplacementNamed(context, 'home');
+                          Navigator.pushReplacementNamed(context, 'tabs');
                         } else {
                           print(error);
                           registerForm.isLoading = false;

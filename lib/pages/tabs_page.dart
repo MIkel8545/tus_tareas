@@ -47,7 +47,7 @@ class _Navigation extends StatelessWidget {
         BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today), label: 'Tareas'),
         BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month), label: 'Calendario'),
+            icon: Icon(Icons.calendar_month), label: 'Próximas'),
       ],
       selectedItemColor: Colors.indigo,
       backgroundColor: Colors.black,

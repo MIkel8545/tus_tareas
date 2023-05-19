@@ -9,9 +9,11 @@ class Tasks {
       {required this.estado,
       required this.fecha,
       required this.titulo,
+      this.detalles,
       this.id});
 
   String estado;
+  String? detalles;
   String fecha;
   String titulo;
   String? id;
@@ -21,17 +23,22 @@ class Tasks {
   String toJson() => json.encode(toMap());
 
   factory Tasks.fromMap(Map<String, dynamic> json) => Tasks(
-        estado: json["Estado"],
-        fecha: json["Fecha"],
-        titulo: json["Titulo"],
-      );
+      estado: json["Estado"],
+      fecha: json["Fecha"],
+      titulo: json["Titulo"],
+      detalles: json["Detalles"]);
 
   Map<String, dynamic> toMap() => {
         "Estado": estado,
         "Fecha": fecha,
         "Titulo": titulo,
+        "Detalles": detalles,
       };
 
   Tasks copy() => Tasks(
-      estado: this.estado, fecha: this.fecha, titulo: this.titulo, id: this.id);
+      estado: this.estado,
+      fecha: this.fecha,
+      detalles: this.detalles,
+      titulo: this.titulo,
+      id: this.id);
 }
